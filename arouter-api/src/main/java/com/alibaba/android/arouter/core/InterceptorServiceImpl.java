@@ -45,7 +45,9 @@ public class InterceptorServiceImpl implements InterceptorService {
                 public void run() {
                     CancelableCountDownLatch interceptorCounter = new CancelableCountDownLatch(Warehouse.interceptors.size());
                     try {
+                     
                         _execute(0, interceptorCounter, postcard);
+                        // 包含超时处理情况，使用CountDown
                         interceptorCounter.await(postcard.getTimeout(), TimeUnit.SECONDS);
                         if (interceptorCounter.getCount() > 0) {    // Cancel the navigation this time, if it hasn't return anythings.
                             callback.onInterrupt(new HandlerException("The interceptor processing timed out."));
@@ -77,6 +79,7 @@ public class InterceptorServiceImpl implements InterceptorService {
             iInterceptor.process(postcard, new InterceptorCallback() {
                 @Override
                 public void onContinue(Postcard postcard) {
+                   // todo  这种可以看作链式拦截处理，以后可以采用这种模式
                     // Last interceptor excute over with no exception.
                     counter.countDown();
                     _execute(index + 1, counter, postcard);  // When counter is down, it will be execute continue ,but index bigger than interceptors size, then U know.
@@ -101,6 +104,7 @@ public class InterceptorServiceImpl implements InterceptorService {
 
     @Override
     public void init(final Context context) {
+      // todo 习惯使用这种反射方式进行类的初始化
         LogisticsCenter.executor.execute(new Runnable() {
             @Override
             public void run() {

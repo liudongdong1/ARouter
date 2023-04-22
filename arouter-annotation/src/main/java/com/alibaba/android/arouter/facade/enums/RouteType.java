@@ -42,7 +42,7 @@ public enum RouteType {
         this.id = id;
         this.className = className;
     }
-
+    // todo  习惯这种枚举方式写法
     public static RouteType parse(String name) {
         for (RouteType routeType : RouteType.values()) {
             if (routeType.getClassName().equals(name)) {

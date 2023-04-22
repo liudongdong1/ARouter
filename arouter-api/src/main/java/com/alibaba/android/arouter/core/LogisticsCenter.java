@@ -284,7 +284,7 @@ public class LogisticsCenter {
                         try {
                             provider = providerMeta.getConstructor().newInstance();
                             provider.init(mContext);
-                            Warehouse.providers.put(providerMeta, provider);
+                            Warehouse.providers.put(providerMeta, provider);   // todo  通过反射获取对应的 IProvider 具体实例
                             instance = provider;
                         } catch (Exception e) {
                             logger.error(TAG, "Init provider failed!", e);

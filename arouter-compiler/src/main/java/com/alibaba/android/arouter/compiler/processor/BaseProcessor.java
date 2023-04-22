@@ -42,6 +42,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
         mFiler = processingEnv.getFiler();
         types = processingEnv.getTypeUtils();
+        //Returns an implementation of some utility methods for operating on elements
         elementUtils = processingEnv.getElementUtils();
         typeUtils = new TypeUtils(types, elementUtils);
         logger = new Logger(processingEnv.getMessager());

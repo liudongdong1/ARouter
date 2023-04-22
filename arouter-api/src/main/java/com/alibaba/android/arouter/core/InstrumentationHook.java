@@ -1,4 +1,4 @@
-package com.alibaba.android.arouter.core;
+  package com.alibaba.android.arouter.core;
 
 import android.app.Activity;
 import android.app.Instrumentation;

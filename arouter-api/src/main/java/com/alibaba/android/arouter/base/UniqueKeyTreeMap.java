@@ -9,6 +9,8 @@ import java.util.TreeMap;
  * @version 1.0
  * @since 2017/2/22 下午5:01
  */
+
+// todo  习惯这种java 覆盖操作
 public class UniqueKeyTreeMap<K, V> extends TreeMap<K, V> {
     private String tipText;
 

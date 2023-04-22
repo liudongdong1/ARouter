@@ -21,11 +21,15 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @version 1.0
  * @since 16/8/16 14:36
  */
+//  https://juejin.cn/post/7123933530156974088#heading-7  ARouter 执行粗略流程
+// todo?  APT 技术，JavaPoet库 gradle AGP技术需要后期加强理解
+// final 类不可被继承 使用，对外暴露的接口类
 public final class ARouter {
     // Key of raw uri
     public static final String RAW_URI = "NTeRQWvye18AkPd6G";
     public static final String AUTO_INJECT = "wmHzgD4lOj5o4241";
 
+    //todo ? 学会使用 volatile，以及这种单例模式
     private volatile static ARouter instance = null;
     private volatile static boolean hasInit = false;
     public static ILogger logger;
@@ -55,6 +59,7 @@ public final class ARouter {
      * All feature U use, will be starts here.
      */
     public static ARouter getInstance() {
+        // todo? 习惯使用这种异常抛出的方法
         if (!hasInit) {
             throw new InitException("ARouter::Init::Invoke init(context) first!");
         } else {
@@ -68,7 +73,7 @@ public final class ARouter {
             return instance;
         }
     }
-
+    // todo? 编程时考虑多线程并发，习惯sybchronized 使用
     public static synchronized void openDebug() {
         _ARouter.openDebug();
     }

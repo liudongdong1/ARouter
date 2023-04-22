@@ -107,6 +107,7 @@ public class RouteProcessor extends BaseProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (CollectionUtils.isNotEmpty(annotations)) {
+            //获取route注解的Elements
             Set<? extends Element> routeElements = roundEnv.getElementsAnnotatedWith(Route.class);
             try {
                 logger.info(">>> Found routes, start... <<<");

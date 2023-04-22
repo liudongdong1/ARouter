@@ -13,6 +13,7 @@ public interface ILogger {
 
     boolean isShowLog = false;
     boolean isShowStackTrace = false;
+    // todo 整个模块使用一个 TAG
     String defaultTag = Consts.TAG;
 
     void showLog(boolean isShowLog);

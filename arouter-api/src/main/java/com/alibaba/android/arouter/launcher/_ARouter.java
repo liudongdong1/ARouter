@@ -49,12 +49,13 @@ final class _ARouter {
     private volatile static boolean autoInject = false;
     private volatile static _ARouter instance = null;
     private volatile static boolean hasInit = false;
+    // todo  线程池，在自己的代码中可以直接复用
     private volatile static ThreadPoolExecutor executor = DefaultPoolExecutor.getInstance();
     private static Handler mHandler;
     private static Context mContext;
 
     private static InterceptorService interceptorService;
-
+    // todo 禁止独自构造对象
     private _ARouter() {
     }
 
@@ -122,7 +123,7 @@ final class _ARouter {
         try {
             Class<?> mMainThreadClass = Class.forName("android.app.ActivityThread");
 
-            // Get current main thread.
+            // Get current main thread. 通过反射获取当前主线程的实例，即调用ActivityThread类的currentActivityThread()方法。
             Method getMainThread = mMainThreadClass.getDeclaredMethod("currentActivityThread");
             getMainThread.setAccessible(true);
             Object currentActivityThread = getMainThread.invoke(null);
@@ -131,7 +132,7 @@ final class _ARouter {
             Field mInstrumentationField = mMainThreadClass.getDeclaredField("mInstrumentation");
             mInstrumentationField.setAccessible(true);
 
-            // Hook current instrumentation
+            // Hook current instrumentation     todo？ 这里不太明白
             mInstrumentationField.set(currentActivityThread, new InstrumentationHook());
             Log.i(Consts.TAG, "ARouter hook instrumentation success!");
         } catch (Exception ex) {
@@ -168,6 +169,7 @@ final class _ARouter {
     }
 
     static void inject(Object thiz) {
+        // todo? 这个作用
         AutowiredService autowiredService = ((AutowiredService) ARouter.getInstance().build("/arouter/service/autowired").navigation());
         if (null != autowiredService) {
             autowiredService.autowire(thiz);
@@ -178,6 +180,7 @@ final class _ARouter {
      * Build postcard by path and default group
      */
     protected Postcard build(String path) {
+      //n todo 习惯使用TextUtils类进行判断
         if (TextUtils.isEmpty(path)) {
             throw new HandlerException(Consts.TAG + "Parameter is invalid!");
         } else {
@@ -193,6 +196,7 @@ final class _ARouter {
      * Build postcard by uri
      */
     protected Postcard build(Uri uri) {
+        // todo 之前经常出现忘记判空处理
         if (null == uri || TextUtils.isEmpty(uri.toString())) {
             throw new HandlerException(Consts.TAG + "Parameter invalid!");
         } else {
@@ -222,7 +226,7 @@ final class _ARouter {
     }
 
     /**
-     * Extract the default group from path.
+     * Extract the default group from path.  例如： /arouter/service/autowired  返回 arouter
      */
     private String extractGroup(String path) {
         if (TextUtils.isEmpty(path) || !path.startsWith("/")) {
@@ -264,7 +268,7 @@ final class _ARouter {
 
             // Set application to postcard.
             postcard.setContext(mContext);
-
+            // todo  通过反射构造具体的 destination 实例，如果为空
             LogisticsCenter.completion(postcard);
             return (T) postcard.getProvider();
         } catch (NoRouteFoundException ex) {
@@ -347,7 +351,7 @@ final class _ARouter {
                     if (null != callback) {
                         callback.onInterrupt(postcard);
                     }
-
+                    
                     logger.info(Consts.TAG, "Navigation failed, termination by interceptor : " + exception.getMessage());
                 }
             });
@@ -357,7 +361,7 @@ final class _ARouter {
 
         return null;
     }
-
+    //todo  路由的关键代码
     private Object _navigation(final Postcard postcard, final int requestCode, final NavigationCallback callback) {
         final Context currentContext = postcard.getContext();
 
@@ -370,11 +374,13 @@ final class _ARouter {
                 // Set flags.
                 int flags = postcard.getFlags();
                 if (0 != flags) {
-                    intent.setFlags(flags);
+                    // 设置activity 所在栈情况 https://blog.csdn.net/ruiruiddd/article/details/106857111
+                    intent.setFlags(flags);  
                 }
 
                 // Non activity, need FLAG_ACTIVITY_NEW_TASK
                 if (!(currentContext instanceof Activity)) {
+                    //将启动的Activity放到一个新的任务栈中，并成为该任务栈的根Activity
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
 

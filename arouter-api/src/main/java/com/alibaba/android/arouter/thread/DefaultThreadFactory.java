@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 15/12/25 上午10:51
  */
 public class DefaultThreadFactory implements ThreadFactory {
+    // todo  原子增长
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
 
     private final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -28,7 +29,8 @@ public class DefaultThreadFactory implements ThreadFactory {
                 Thread.currentThread().getThreadGroup();
         namePrefix = "ARouter task pool No." + poolNumber.getAndIncrement() + ", thread No.";
     }
-
+    
+    // thread 根据 runnable，groupname，threadname 并设置thread异常报错信息，方便日志进行排查，在自己的工作中可以使用借鉴
     public Thread newThread(@NonNull Runnable runnable) {
         String threadName = namePrefix + threadNumber.getAndIncrement();
         ARouter.logger.info(Consts.TAG, "Thread production, name is [" + threadName + "]");
